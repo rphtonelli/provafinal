@@ -1,0 +1,224 @@
+openapi: 3.0.0
+info:
+  title: API de Gestão de Alunos
+  version: 1.0.0
+  description: Endpoints para gerenciamento de alunos
+
+paths:
+  /alunos:
+    post:
+      summary: Adiciona um novo aluno
+      description: Cria um novo registro de aluno no sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlunoInput'
+      responses:
+        '201':
+          description: Aluno criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Aluno adicionado"
+        '400':
+          description: Campos obrigatórios faltando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Campos obrigatórios não preenchidos: nome_completo, data_nascimento"
+        '404':
+          description: Turma não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Turma não encontrada"
+        '500':
+          description: Erro interno do servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Erro no banco de dados"
+
+  /alunos/{id_aluno}:
+    get:
+      summary: Obtém detalhes de um aluno
+      description: Retorna todas as informações de um aluno específico
+      parameters:
+        - name: id_aluno
+          in: path
+          required: true
+          description: ID do aluno
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados do aluno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aluno'
+        '404':
+          description: Aluno não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Aluno não encontrado"
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza os dados de um aluno
+      description: Atualiza as informações de um aluno existente
+      parameters:
+        - name: id_aluno
+          in: path
+          required: true
+          description: ID do aluno
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlunoUpdate'
+      responses:
+        '200':
+          description: Aluno atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Aluno atualizado"
+        '500':
+          description: Erro interno do servidor
+
+    delete:
+      summary: Remove um aluno
+      description: Exclui permanentemente um registro de aluno
+      parameters:
+        - name: id_aluno
+          in: path
+          required: true
+          description: ID do aluno
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Aluno removido com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Aluno deletado"
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    AlunoInput:
+      type: object
+      required:
+        - nome_completo
+        - data_nascimento
+        - id_turma
+        - nome_responsavel
+        - telefone_responsavel
+        - email_responsavel
+      properties:
+        nome_completo:
+          type: string
+          description: Nome completo do aluno
+        data_nascimento:
+          type: string
+          format: date
+          description: Data de nascimento (YYYY-MM-DD)
+        id_turma:
+          type: integer
+          description: ID da turma do aluno
+        nome_responsavel:
+          type: string
+          description: Nome do responsável
+        telefone_responsavel:
+          type: string
+          description: Telefone do responsável
+        email_responsavel:
+          type: string
+          format: email
+          description: Email do responsável
+        informacoes_adicionais:
+          type: string
+          description: Informações complementares
+          default: ""
+
+    AlunoUpdate:
+      type: object
+      required:
+        - nome_completo
+        - data_nascimento
+        - nome_responsavel
+        - telefone_responsavel
+        - email_responsavel
+        - informacoes_adicionais
+      properties:
+        nome_completo:
+          type: string
+        data_nascimento:
+          type: string
+          format: date
+        nome_responsavel:
+          type: string
+        telefone_responsavel:
+          type: string
+        email_responsavel:
+          type: string
+          format: email
+        informacoes_adicionais:
+          type: string
+
+    Aluno:
+      type: object
+      properties:
+        id_aluno:
+          type: integer
+          description: ID único do aluno
+        nome_completo:
+          type: string
+        data_nascimento:
+          type: string
+        nome_responsavel:
+          type: string
+        telefone_responsavel:
+          type: string
+        email_responsavel:
+          type: string
+        informacoes_adicionais:
+          type: string

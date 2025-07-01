@@ -1,0 +1,9 @@
+psycopg2-binary
+pyyaml
+Flask
+prometheus-flask-exporter
+flasgger
+pandas
+openpyxl
+pandas
+openpyxl

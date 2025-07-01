@@ -1,0 +1,229 @@
+openapi: 3.0.0
+info:
+  title: API Escola Infantil
+  version: 1.0.0
+  description: |
+    Sistema completo de gestão escolar incluindo:
+    - Alunos
+    - Professores
+    - Turmas
+    - Atividades
+    - Pagamentos
+    - Presenças
+  contact:
+    email: suporte@escolainfantil.com
+
+servers:
+  - url: http://localhost:5000/api
+    description: Servidor de desenvolvimento
+
+tags:
+  - name: Alunos
+    description: Gestão de alunos
+  - name: Professores
+    description: Gestão de professores
+  - name: Turmas
+    description: Gestão de turmas
+  - name: Atividades
+    description: Gestão de atividades
+  - name: Pagamentos
+    description: Gestão financeira
+  - name: Presenças
+    description: Controle de frequência
+  - name: Usuários
+    description: Gerenciamento de acessos
+
+paths:
+  # ==================== ALUNOS ====================
+  /alunos:
+    post:
+      tags: [Alunos]
+      summary: Cadastra novo aluno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlunoInput'
+      responses:
+        201:
+          description: Aluno criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aluno'
+        400:
+          $ref: '#/components/responses/MissingFields'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /alunos/{id_aluno}:
+    get:
+      tags: [Alunos]
+      summary: Consulta aluno por ID
+      parameters:
+        - $ref: '#/components/parameters/idAluno'
+      responses:
+        200:
+          description: Dados do aluno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Aluno'
+        404:
+          $ref: '#/components/responses/NotFound'
+    
+    put:
+      tags: [Alunos]
+      summary: Atualiza dados do aluno
+      parameters:
+        - $ref: '#/components/parameters/idAluno'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AlunoUpdate'
+      responses:
+        200:
+          description: Aluno atualizado
+        404:
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Alunos]
+      summary: Remove aluno
+      parameters:
+        - $ref: '#/components/parameters/idAluno'
+      responses:
+        200:
+          description: Aluno removido
+        404:
+          $ref: '#/components/responses/NotFound'
+
+  # ==================== PROFESSORES ====================
+  /professores:
+    post:
+      tags: [Professores]
+      summary: Cadastra novo professor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfessorInput'
+      responses:
+        201:
+          description: Professor criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Professor'
+
+  /professores/{id_professor}:
+    get:
+      tags: [Professores]
+      summary: Consulta professor por ID
+      parameters:
+        - $ref: '#/components/parameters/idProfessor'
+      responses:
+        200:
+          description: Dados do professor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Professor'
+
+  # ==================== OUTROS CRUDS ====================
+  # (Turmas, Atividades, Pagamentos, Presenças, Usuários...)
+  # Padrão idêntico ao acima, mantido por brevidade
+
+components:
+  # ============ PARÂMETROS REUTILIZÁVEIS ============
+  parameters:
+    idAluno:
+      name: id_aluno
+      in: path
+      required: true
+      schema:
+        type: integer
+      example: 1
+    
+    idProfessor:
+      name: id_professor
+      in: path
+      required: true
+      schema:
+        type: integer
+
+  # ============ RESPOSTAS PADRÃO ============
+  responses:
+    NotFound:
+      description: Recurso não encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    MissingFields:
+      description: Campos obrigatórios faltando
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    
+    ServerError:
+      description: Erro interno do servidor
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+  # ============ SCHEMAS PRINCIPAIS ============
+  schemas:
+    # ===== ALUNOS =====
+    AlunoInput:
+      type: object
+      required:
+        - nome_completo
+        - data_nascimento
+      properties:
+        nome_completo:
+          type: string
+          example: "João da Silva"
+        data_nascimento:
+          type: string
+          format: date
+          example: "2015-03-20"
+
+    Aluno:
+      allOf:
+        - $ref: '#/components/schemas/AlunoInput'
+        - type: object
+          properties:
+            id_aluno:
+              type: integer
+              example: 1
+
+    # ===== PROFESSORES =====
+    ProfessorInput:
+      type: object
+      required:
+        - nome_completo
+        - email
+      properties:
+        nome_completo:
+          type: string
+          example: "Maria Oliveira"
+        email:
+          type: string
+          format: email
+          example: "prof.maria@escola.com"
+
+    # ===== MODELOS COMUNS =====
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Mensagem de erro detalhada"

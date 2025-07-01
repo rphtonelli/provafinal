@@ -1,0 +1,194 @@
+openapi: 3.0.0
+info:
+  title: API de Gestão de Atividades
+  version: 1.0.0
+  description: Endpoints para gerenciamento de atividades acadêmicas
+
+paths:
+  /atividade:
+    post:
+      summary: Cria uma nova atividade
+      description: Registra uma nova atividade associada a uma turma
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtividadeInput'
+      responses:
+        '201':
+          description: Atividade criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Atividade adicionada"
+        '400':
+          description: Campos obrigatórios faltando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Campos obrigatórios não preenchidos"
+        '404':
+          description: Turma não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Turma não encontrada"
+        '500':
+          description: Erro interno do servidor
+
+  /atividade/{id_atividade}:
+    get:
+      summary: Obtém detalhes de uma atividade
+      description: Retorna informações completas de uma atividade específica
+      parameters:
+        - name: id_atividade
+          in: path
+          required: true
+          description: ID da atividade
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da atividade
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Atividade'
+        '404':
+          description: Atividade não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Atividade não encontrada"
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza uma atividade existente
+      description: Modifica os dados de uma atividade registrada
+      parameters:
+        - name: id_atividade
+          in: path
+          required: true
+          description: ID da atividade
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtividadeInput'
+      responses:
+        '200':
+          description: Atividade atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Atividade atualizada"
+        '400':
+          description: Campos obrigatórios faltando
+        '500':
+          description: Erro interno do servidor
+
+    delete:
+      summary: Remove uma atividade
+      description: Exclui permanentemente um registro de atividade
+      parameters:
+        - name: id_atividade
+          in: path
+          required: true
+          description: ID da atividade
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Atividade removida com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Atividade deletada"
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    AtividadeInput:
+      type: object
+      required:
+        - id_turma
+        - data_atividade
+        - tipo_atividade
+        - descricao_atividade
+        - observacoes_atividade
+      properties:
+        id_turma:
+          type: integer
+          description: ID da turma associada
+          example: 1
+        data_atividade:
+          type: string
+          format: date
+          description: Data de realização (YYYY-MM-DD)
+          example: "2023-10-15"
+        tipo_atividade:
+          type: string
+          description: Tipo/categoria da atividade
+          example: "Prova"
+        descricao_atividade:
+          type: string
+          description: Descrição detalhada
+          example: "Prova bimestral de Matemática"
+        observacoes_atividade:
+          type: string
+          description: Observações complementares
+          example: "Trazer calculadora científica"
+
+    Atividade:
+      type: object
+      properties:
+        id_atividade:
+          type: integer
+          description: ID único da atividade
+          example: 1
+        id_turma:
+          type: integer
+          example: 1
+        data_atividade:
+          type: string
+          format: date
+          example: "2023-10-15"
+        tipo_atividade:
+          type: string
+          example: "Prova"
+        descricao_atividade:
+          type: string
+          example: "Prova bimestral de Matemática"
+        observacoes_atividade:
+          type: string
+          example: "Trazer calculadora científica"

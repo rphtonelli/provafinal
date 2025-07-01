@@ -1,0 +1,175 @@
+openapi: 3.0.0
+info:
+  title: API de Gestão de Professores
+  version: 1.0.0
+  description: Endpoints para gerenciamento de professores da instituição
+
+paths:
+  /professores:
+    post:
+      summary: Cadastra um novo professor
+      description: Cria um novo registro de professor na base de dados
+      tags:
+        - Professores
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfessorInput'
+      responses:
+        '201':
+          description: Professor cadastrado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Professor adicionado"
+        '400':
+          description: Campos obrigatórios faltando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Campos obrigatórios não preenchidos"
+        '500':
+          description: Erro interno do servidor
+
+  /professores/{id_professor}:
+    get:
+      summary: Consulta um professor
+      description: Retorna os dados completos de um professor específico
+      tags:
+        - Professores
+      parameters:
+        - name: id_professor
+          in: path
+          required: true
+          description: ID do professor
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados do professor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Professor'
+        '404':
+          description: Professor não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Professor não encontrado"
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza dados de professor
+      description: Modifica as informações de um professor existente
+      tags:
+        - Professores
+      parameters:
+        - name: id_professor
+          in: path
+          required: true
+          description: ID do professor
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfessorInput'
+      responses:
+        '200':
+          description: Professor atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Professor atualizado"
+        '500':
+          description: Erro interno do servidor
+
+    delete:
+      summary: Remove um professor
+      description: Exclui permanentemente um registro de professor
+      tags:
+        - Professores
+      parameters:
+        - name: id_professor
+          in: path
+          required: true
+          description: ID do professor
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Professor removido com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Professor deletado"
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    ProfessorInput:
+      type: object
+      required:
+        - nome_completo
+        - email
+        - telefone
+      properties:
+        nome_completo:
+          type: string
+          description: Nome completo do professor
+          example: "Maria da Silva Santos"
+        email:
+          type: string
+          format: email
+          description: E-mail institucional
+          example: "maria.santos@escola.com"
+        telefone:
+          type: string
+          description: Telefone para contato
+          example: "(11) 98765-4321"
+          pattern: '^\(\d{2}\) \d{4,5}-\d{4}$'
+
+    Professor:
+      type: object
+      properties:
+        id_professor:
+          type: integer
+          description: ID único do professor
+          example: 1
+        nome_completo:
+          type: string
+          example: "Maria da Silva Santos"
+        email:
+          type: string
+          format: email
+          example: "maria.santos@escola.com"
+        telefone:
+          type: string
+          example: "(11) 98765-4321"

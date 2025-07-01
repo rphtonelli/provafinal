@@ -1,9 +1,13 @@
-FROM postgres:latest
+FROM python:3.9-slim
 
-ENV POSTGRES_DB=northwind
-ENV POSTGRES_USER=faat
-ENV POSTGRES_PASSWORD=faat
+WORKDIR /app
 
-COPY northwind.sql / docker-entrypoint-initdb.d/
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+RUN pip install pyyaml
 
-EXPOSE   5432
+COPY ./App .
+
+EXPOSE 5000
+
+CMD ["python", "main.py"]

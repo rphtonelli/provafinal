@@ -1,0 +1,190 @@
+openapi: 3.0.0
+info:
+  title: API de Gestão de Usuários
+  version: 1.0.0
+  description: Endpoints para gerenciamento de usuários do sistema
+
+paths:
+  /usuarios:
+    post:
+      summary: Cria um novo usuário
+      description: Registra um novo usuário no sistema com permissões específicas
+      tags:
+        - Usuários
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioInput'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Usuário adicionado"
+        '500':
+          description: Erro interno do servidor
+
+  /usuarios/{id_usuario}:
+    get:
+      summary: Consulta um usuário
+      description: Retorna os dados de um usuário específico (exceto senha)
+      tags:
+        - Usuários
+      parameters:
+        - name: id_usuario
+          in: path
+          required: true
+          description: ID do usuário
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados do usuário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Usuario'
+        '404':
+          description: Usuário não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Usuário não encontrado"
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza um usuário
+      description: Modifica os dados de um usuário existente
+      tags:
+        - Usuários
+      parameters:
+        - name: id_usuario
+          in: path
+          required: true
+          description: ID do usuário
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioUpdate'
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Usuario atualizado"
+        '500':
+          description: Erro interno do servidor
+
+  /professor/{id_usuario}:
+    delete:
+      summary: Remove um usuário
+      description: Exclui permanentemente um registro de usuário
+      tags:
+        - Usuários
+      parameters:
+        - name: id_usuario
+          in: path
+          required: true
+          description: ID do usuário
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuário removido com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Usuario deletado"
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    UsuarioInput:
+      type: object
+      required:
+        - login
+        - senha
+        - nivel_acesso
+        - id_professor
+      properties:
+        login:
+          type: string
+          description: Nome de usuário para acesso
+          example: "prof.maria"
+        senha:
+          type: string
+          format: password
+          description: Senha de acesso (deve ser criptografada na aplicação)
+          example: "SenhaSegura123@"
+          writeOnly: true
+        nivel_acesso:
+          type: string
+          enum: [admin, professor, secretaria]
+          description: Nível de permissão do usuário
+          example: "professor"
+        id_professor:
+          type: integer
+          description: ID do professor associado (se aplicável)
+          example: 1
+
+    UsuarioUpdate:
+      type: object
+      properties:
+        login:
+          type: string
+          example: "prof.maria.updated"
+        senha:
+          type: string
+          format: password
+          writeOnly: true
+          example: "NovaSenha456@"
+        nivel_acesso:
+          type: string
+          enum: [admin, professor, secretaria]
+          example: "professor"
+        id_professor:
+          type: integer
+          example: 1
+
+    Usuario:
+      type: object
+      properties:
+        id_usuario:
+          type: integer
+          description: ID único do usuário
+          example: 1
+        login:
+          type: string
+          example: "prof.maria"
+        nivel_acesso:
+          type: string
+          example: "professor"
+        id_professor:
+          type: integer
+          example: 1

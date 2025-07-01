@@ -1,0 +1,190 @@
+openapi: 3.0.0
+info:
+  title: API de Gestão de Turmas
+  version: 1.0.0
+  description: Endpoints para gerenciamento de turmas escolares
+
+paths:
+  /turmas:
+    post:
+      summary: Cria uma nova turma
+      description: Registra uma nova turma associada a um professor
+      tags:
+        - Turmas
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TurmaInput'
+      responses:
+        '201':
+          description: Turma criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Turma adicionada com sucesso"
+        '404':
+          description: Professor não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Professor não encontrado"
+        '500':
+          description: Erro interno do servidor
+
+  /turmas/{id_turma}:
+    get:
+      summary: Obtém detalhes de uma turma
+      description: Retorna informações completas de uma turma específica
+      tags:
+        - Turmas
+      parameters:
+        - name: id_turma
+          in: path
+          required: true
+          description: ID da turma
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da turma
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Turma'
+        '404':
+          description: Turma não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Turma não encontrada"
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza uma turma existente
+      description: Modifica os dados de uma turma registrada
+      tags:
+        - Turmas
+      parameters:
+        - name: id_turma
+          in: path
+          required: true
+          description: ID da turma
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TurmaUpdate'
+      responses:
+        '200':
+          description: Turma atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Turma atualizada com sucesso"
+        '500':
+          description: Erro interno do servidor
+
+    delete:
+      summary: Remove uma turma
+      description: Exclui permanentemente um registro de turma
+      tags:
+        - Turmas
+      parameters:
+        - name: id_turma
+          in: path
+          required: true
+          description: ID da turma
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Turma removida com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Turma deletada com sucesso"
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    TurmaInput:
+      type: object
+      required:
+        - nome_completo
+        - nome_turma
+        - horario
+      properties:
+        nome_completo:
+          type: string
+          description: Nome completo do professor responsável
+          example: "Maria da Silva"
+        nome_turma:
+          type: string
+          description: Nome/identificação da turma
+          example: "Infantil II-A"
+        horario:
+          type: string
+          description: Horário das aulas (formato livre)
+          example: "Segunda e Quarta, 13h-15h"
+
+    TurmaUpdate:
+      type: object
+      required:
+        - nome_turma
+        - id_professor
+        - horario
+      properties:
+        nome_turma:
+          type: string
+          example: "Infantil II-B"
+        id_professor:
+          type: integer
+          description: ID do professor responsável
+          example: 2
+        horario:
+          type: string
+          example: "Terça e Quinta, 14h-16h"
+
+    Turma:
+      type: object
+      properties:
+        id_turma:
+          type: integer
+          description: ID único da turma
+          example: 1
+        nome_turma:
+          type: string
+          example: "Infantil II-A"
+        id_professor:
+          type: integer
+          example: 1
+        horario:
+          type: string
+          example: "Segunda e Quarta, 13h-15h"

@@ -1,0 +1,216 @@
+openapi: 3.0.0
+info:
+  title: API de Gestão de Atividades de Alunos
+  version: 1.0.0
+  description: Endpoints para gerenciamento de atividades associadas a alunos
+
+paths:
+  /atividade_aluno:
+    post:
+      summary: Adiciona uma nova atividade de aluno
+      description: Cria um novo registro de atividade associada a um aluno
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtividadeAlunoInput'
+      responses:
+        '201':
+          description: Atividade criada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Atividade do aluno adicionada"
+        '400':
+          description: Campos obrigatórios faltando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Campos obrigatórios não preenchidos"
+        '404':
+          description: Aluno não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Aluno não encontrado"
+        '500':
+          description: Erro interno do servidor
+
+  /atividade_aluno/{id_atividade_aluno}:
+    get:
+      summary: Obtém detalhes de uma atividade de aluno
+      description: Retorna informações detalhadas de uma atividade específica
+      parameters:
+        - name: id_atividade_aluno
+          in: path
+          required: true
+          description: ID da atividade do aluno
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da atividade
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AtividadeAluno'
+        '404':
+          description: Atividade não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Atividade do aluno não encontrada"
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza uma atividade de aluno
+      description: Atualiza as informações de uma atividade existente
+      parameters:
+        - name: id_atividade_aluno
+          in: path
+          required: true
+          description: ID da atividade do aluno
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AtividadeAlunoInput'
+      responses:
+        '200':
+          description: Atividade atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Atividade do aluno atualizada"
+        '400':
+          description: Campos obrigatórios faltando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Campos obrigatórios não preenchidos"
+        '404':
+          description: Atividade não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Atividade do aluno não encontrada"
+        '500':
+          description: Erro interno do servidor
+
+    delete:
+      summary: Remove uma atividade de aluno
+      description: Exclui permanentemente um registro de atividade
+      parameters:
+        - name: id_atividade_aluno
+          in: path
+          required: true
+          description: ID da atividade do aluno
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Atividade removida com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Atividade do aluno deletada"
+        '404':
+          description: Atividade não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Atividade do aluno não encontrada"
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    AtividadeAlunoInput:
+      type: object
+      required:
+        - id_aluno
+        - id_atividade
+        - data_atividade
+        - tipo_atividade
+        - descricao_atividade
+        - observacoes_atividade
+      properties:
+        id_aluno:
+          type: integer
+          description: ID do aluno associado
+        id_atividade:
+          type: integer
+          description: ID da atividade
+        data_atividade:
+          type: string
+          format: date
+          description: Data da atividade (YYYY-MM-DD)
+        tipo_atividade:
+          type: string
+          description: Tipo da atividade
+        descricao_atividade:
+          type: string
+          description: Descrição detalhada
+        observacoes_atividade:
+          type: string
+          description: Observações adicionais
+
+    AtividadeAluno:
+      type: object
+      properties:
+        id_atividade_aluno:
+          type: integer
+          description: ID único da atividade
+        id_aluno:
+          type: integer
+        id_atividade:
+          type: integer
+        data_atividade:
+          type: string
+        tipo_atividade:
+          type: string
+        descricao_atividade:
+          type: string
+        observacoes_atividade:
+          type: string

@@ -1,0 +1,5 @@
+database: "escola"
+user: "faat"
+password: "faat"
+host: "db"
+port: "5432"

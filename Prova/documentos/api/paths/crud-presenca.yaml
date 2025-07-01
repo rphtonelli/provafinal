@@ -1,0 +1,187 @@
+openapi: 3.0.0
+info:
+  title: API de Gestão de Presenças
+  version: 1.0.0
+  description: Endpoints para registro e consulta de presenças dos alunos
+
+paths:
+  /presencas:
+    post:
+      summary: Registra uma nova presença
+      description: Cria um novo registro de presença/ausência de aluno
+      tags:
+        - Presenças
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresencaInput'
+      responses:
+        '201':
+          description: Presença registrada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Presença adicionada"
+        '400':
+          description: Campos obrigatórios faltando
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Campos obrigatórios não preenchidos"
+        '404':
+          description: Aluno não encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Aluno não encontrado"
+        '500':
+          description: Erro interno do servidor
+
+  /presencas/{id_presenca}:
+    get:
+      summary: Consulta uma presença
+      description: Retorna os detalhes de um registro de presença específico
+      tags:
+        - Presenças
+      parameters:
+        - name: id_presenca
+          in: path
+          required: true
+          description: ID do registro de presença
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Dados da presença
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Presenca'
+        '404':
+          description: Presença não encontrada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Presença não encontrada"
+        '500':
+          description: Erro interno do servidor
+
+    put:
+      summary: Atualiza um registro de presença
+      description: Modifica os dados de uma presença existente
+      tags:
+        - Presenças
+      parameters:
+        - name: id_presenca
+          in: path
+          required: true
+          description: ID do registro de presença
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PresencaInput'
+      responses:
+        '200':
+          description: Presença atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Presença atualizada"
+        '400':
+          description: Campos obrigatórios faltando
+        '500':
+          description: Erro interno do servidor
+
+    delete:
+      summary: Remove um registro de presença
+      description: Exclui permanentemente um registro de presença
+      tags:
+        - Presenças
+      parameters:
+        - name: id_presenca
+          in: path
+          required: true
+          description: ID do registro de presença
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Presença removida com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Presença deletada"
+        '500':
+          description: Erro interno do servidor
+
+components:
+  schemas:
+    PresencaInput:
+      type: object
+      required:
+        - id_aluno
+        - data_presenca
+        - status_presenca
+      properties:
+        id_aluno:
+          type: integer
+          description: ID do aluno
+          example: 1
+        data_presenca:
+          type: string
+          format: date
+          description: Data da presença (YYYY-MM-DD)
+          example: "2023-10-25"
+        status_presenca:
+          type: string
+          description: Status de presença
+          enum: [presente, faltou, atrasado]
+          example: "presente"
+
+    Presenca:
+      type: object
+      properties:
+        id_presenca:
+          type: integer
+          description: ID único do registro
+          example: 1
+        id_aluno:
+          type: integer
+          example: 1
+        data_presenca:
+          type: string
+          format: date
+          example: "2023-10-25"
+        status_presenca:
+          type: string
+          example: "presente"
